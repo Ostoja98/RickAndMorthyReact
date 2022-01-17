@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import HomePage from "./Pages/HomePage/HomePage.jsx";
+import SinglePage from "./Pages/SinglePage/SinglePage.jsx";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.setSelectedChar = this.setSelectedChar.bind(this);
+    this.state = {
+      data: [],
+      activePage: 1,
+      selectedChar: null,
+    };
+  }
+  componentDidMount() {
+    fetch(
+      `https://rickandmortyapi.com/api/character/?page=${this.state.activePage}`
+    )
+      .then((res) => res.json())
+      .then((res) => this.setState({ data: res.results }));
+  }
+
+  setSelectedChar(charId) {
+    this.setState({ selectedChar: charId });
+  }
+
+  render() {
+    return (
+      <div>
+        {this.state.selectedChar ? (
+          <SinglePage id={this.state.selectedChar} />
+        ) : (
+          <HomePage
+            characters={this.state.data}
+            setSelectedChar={this.setSelectedChar}
+          />
+        )}
+      </div>
+    );
+  }
 }
 
 export default App;
